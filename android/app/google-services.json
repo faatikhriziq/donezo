@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "156416546526",
+    "project_id": "donezo-50470",
+    "storage_bucket": "donezo-50470.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156416546526:android:3ff652443d10f17c75944f",
+        "android_client_info": {
+          "package_name": "com.donezo.donezo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhX7RnHDWjR94v0hR1Bl4U-lgS4ADdAVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

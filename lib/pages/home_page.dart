@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:unicons/unicons.dart';
 
-import '../core/theme/app_color.dart';
+import '../config/theme/app_color.dart';
 import '../core/widgets/card_dashboard.dart';
 import '../core/widgets/task_card.dart';
 
