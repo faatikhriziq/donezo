@@ -209,29 +209,51 @@ class _SignInPageState extends State<SignInPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1.3,
-                          ),
-                          color: Colors.white,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: Offset(0, 3),
+                      child: BlocListener<AuthBloc, AuthState>(
+                        listener: (context, state) {
+                          if (state is AuthSignInWithGoogleSuccess) {
+                            context.go('/');
+                          } else if (state is AuthSignInWithGoogleFailure) {
+                            if (state.error == 'popup_closed') {
+                              return;
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.error!),
+                                backgroundColor: AppColor.redInvalid,
+                              ),
+                            );
+                          }
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            context.read<AuthBloc>().add(const AuthSignInWithGoogleEvent());
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
                             ),
-                          ],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Image.asset(
-                          'assets/images/google-logo.png',
-                          width: 20,
-                          height: 20,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 1.3,
+                              ),
+                              color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Image.asset(
+                              'assets/images/google-logo.png',
+                              width: 20,
+                              height: 20,
+                            ),
+                          ),
                         ),
                       ),
                     ),

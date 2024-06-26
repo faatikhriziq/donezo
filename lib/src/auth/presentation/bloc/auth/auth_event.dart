@@ -7,7 +7,6 @@ abstract class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
-
 class AuthSignUpEvent extends AuthEvent {
   final SignUpParams signUpParams;
 
@@ -28,4 +27,8 @@ class AuthSignInEvent extends AuthEvent {
   List<Object> get props => [
         signInParams
       ];
+}
+
+class AuthSignInWithGoogleEvent extends AuthEvent {
+  const AuthSignInWithGoogleEvent();
 }

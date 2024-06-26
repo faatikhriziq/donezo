@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:donezo/core/resources/data_state.dart';
 import 'package:donezo/src/auth/data/datasources/auth_firebase_datasource.dart';
+import 'package:donezo/src/auth/domain/entities/auth_credential_entity.dart';
 import 'package:donezo/src/auth/domain/entities/user_entity.dart';
 import 'package:donezo/src/auth/domain/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +44,6 @@ class AuthRepositoriesImpl implements AuthRepository {
       }
       return DataState.error(errorMessage);
     } catch (e) {
-      log(e.toString());
       return DataState.error(e.toString());
     }
   }
@@ -87,6 +87,34 @@ class AuthRepositoriesImpl implements AuthRepository {
   }
 
   @override
+  Future<DataState<AuthCredentialEntity>> signInWithGoogle() async {
+    try {
+      final response = await authFirebaseDatasource.signInWithGoogle();
+      if (response.user != null) {
+        final useCredential = AuthCredentialEntity.fromAtuhCredential(response.credential!);
+        return DataState.success(useCredential);
+      } else {
+        return DataState.error("Error while signing in with Google. Please try again.");
+      }
+    } on FirebaseAuthException catch (e) {
+      log(e.toString());
+      String errorMessage;
+      switch (e.code) {
+        case 'google_sign_in_failed':
+          errorMessage = e.message!;
+          break;
+        default:
+          log(e.toString());
+          errorMessage = e.message!;
+      }
+      return DataState.error(errorMessage);
+    } catch (e) {
+      log(e.toString());
+      return DataState.error(e.toString());
+    }
+  }
+
+  @override
   Future<String> getUserEmail() {
     // TODO: implement getUserEmail
     throw UnimplementedError();
@@ -113,12 +141,6 @@ class AuthRepositoriesImpl implements AuthRepository {
   @override
   Future<void> signInWithFacebook() {
     // TODO: implement signInWithFacebook
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> signInWithGoogle() {
-    // TODO: implement signInWithGoogle
     throw UnimplementedError();
   }
 

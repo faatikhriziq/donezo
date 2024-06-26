@@ -2,6 +2,7 @@ import 'package:donezo/config/routes/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../core/di/injection_container.dart';
 
@@ -18,6 +19,8 @@ class ProfilePage extends StatelessWidget {
           child: ElevatedButton(
         onPressed: () async {
           final firebaseAuth = sl<FirebaseAuth>();
+          final googleSignIn = sl<GoogleSignIn>();
+          await googleSignIn.signOut();
           await firebaseAuth.signOut();
           if (!context.mounted) return;
           context.go(AppRoutes.signIn);

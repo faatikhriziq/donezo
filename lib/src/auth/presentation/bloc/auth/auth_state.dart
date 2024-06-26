@@ -53,4 +53,15 @@ class AuthSignInFailure extends AuthState {
       ];
 }
 
+class AuthSignInWithGoogleSuccess extends AuthState {}
 
+class AuthSignInWithGoogleFailure extends AuthState {
+  final String? error;
+
+  const AuthSignInWithGoogleFailure({required this.error});
+
+  @override
+  List<Object> get props => [
+        error!
+      ];
+}

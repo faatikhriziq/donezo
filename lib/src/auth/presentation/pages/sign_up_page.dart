@@ -392,8 +392,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         if (state is AuthFormSignUpValidValidateState && !confirmPasswordFocusNode.hasFocus) {
                           log(emailController.text.trim());
                           final SignUpParams params = sl.get<SignUpParams>();
-                          params.email = "mualfari@gmail.com";
-                          params.password = "password";
+                          params.email = emailController.text.trim();
+                          params.password = passwordController.text;
                           context.read<AuthBloc>().add(AuthSignUpEvent(signUpParams: params));
                         }
                       },
