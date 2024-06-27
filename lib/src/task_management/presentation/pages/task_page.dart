@@ -1,9 +1,9 @@
+import 'package:donezo/config/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../config/theme/app_color.dart';
 import '../../../../core/widgets/task_card.dart';
-import 'task_form_page.dart';
-
 
 class TaskPage extends StatelessWidget {
   const TaskPage({super.key});
@@ -11,8 +11,11 @@ class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:  SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 50),
+        appBar: AppBar(
+          title: const Text('Task Management'),
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -59,7 +62,7 @@ class TaskPage extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 75),
           child: FloatingActionButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const TaskFormPage()));
+              context.push(AppRoutes.taskForm);
             },
             child: const Icon(Icons.add),
             backgroundColor: AppColor.maroon,

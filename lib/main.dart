@@ -23,6 +23,7 @@ class Donezo extends StatelessWidget {
     return MultiBlocProvider(
       providers: blocProviders,
       child: MaterialApp.router(
+        themeMode: ThemeMode.light,
         routerConfig: AppRoutes.routes,
         theme: appTheme(),
         debugShowCheckedModeBanner: false,

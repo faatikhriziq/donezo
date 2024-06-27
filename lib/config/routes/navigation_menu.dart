@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:donezo/pages/calendar_page.dart';
 import 'package:donezo/pages/home_page.dart';
@@ -72,153 +75,157 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
           _handleIndexChanged(index);
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(
-          bottom: 20,
-          left: 20,
-          right: 20,
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  Padding buildBottomNavigationBar() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 20,
+        left: 20,
+        right: 20,
+      ),
+      child: Container(
+        constraints: const BoxConstraints(
+          minHeight: 60,
+          maxHeight: 60,
         ),
-        child: Container(
-          constraints: const BoxConstraints(
-            minHeight: 60,
-            maxHeight: 60,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(60),
-            color: AppColor.primary,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(0, 4.5),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linearToEaseOut,
-                    height: 5,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: _selectedTab == SelectedTab.home ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(60),
+          color: AppColor.primary,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black,
+              offset: Offset(0, 4.5),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linearToEaseOut,
+                  height: 5,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: _selectedTab == SelectedTab.home ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      animateToPage(0);
-                    },
-                    icon: Icon(
-                      UniconsLine.home,
-                      color: _selectedTab == SelectedTab.home ? Colors.white : AppColor.dark,
-                    ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    animateToPage(0);
+                  },
+                  icon: Icon(
+                    UniconsLine.home,
+                    color: _selectedTab == SelectedTab.home ? Colors.white : AppColor.dark,
                   ),
-                ],
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linearToEaseOut,
-                    height: 5,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: _selectedTab == SelectedTab.calendar ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linearToEaseOut,
+                  height: 5,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: _selectedTab == SelectedTab.calendar ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      animateToPage(1);
-                    },
-                    icon: Icon(
-                      UniconsLine.calendar_alt,
-                      color: _selectedTab == SelectedTab.calendar ? Colors.white : AppColor.dark,
-                    ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    animateToPage(1);
+                  },
+                  icon: Icon(
+                    UniconsLine.calendar_alt,
+                    color: _selectedTab == SelectedTab.calendar ? Colors.white : AppColor.dark,
                   ),
-                ],
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linearToEaseOut,
-                    height: 5,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: _selectedTab == SelectedTab.task ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linearToEaseOut,
+                  height: 5,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: _selectedTab == SelectedTab.task ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      animateToPage(2);
-                    },
-                    icon: Icon(
-                      UniconsLine.plus_circle,
-                      color: _selectedTab == SelectedTab.task ? Colors.white : AppColor.dark,
-                    ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    animateToPage(2);
+                  },
+                  icon: Icon(
+                    UniconsLine.plus_circle,
+                    color: _selectedTab == SelectedTab.task ? Colors.white : AppColor.dark,
                   ),
-                ],
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linearToEaseOut,
-                    height: 5,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: _selectedTab == SelectedTab.kanban ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linearToEaseOut,
+                  height: 5,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: _selectedTab == SelectedTab.kanban ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      animateToPage(3);
-                    },
-                    icon: Icon(
-                      UniconsLine.layers_alt,
-                      color: _selectedTab == SelectedTab.kanban ? Colors.white : AppColor.dark,
-                    ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    animateToPage(3);
+                  },
+                  icon: Icon(
+                    UniconsLine.layers_alt,
+                    color: _selectedTab == SelectedTab.kanban ? Colors.white : AppColor.dark,
                   ),
-                ],
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linearToEaseOut,
-                    height: 5,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: _selectedTab == SelectedTab.profile ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linearToEaseOut,
+                  height: 5,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: _selectedTab == SelectedTab.profile ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      animateToPage(4);
-                    },
-                    icon: Icon(
-                      UniconsLine.user,
-                      color: _selectedTab == SelectedTab.profile ? Colors.white : AppColor.dark,
-                    ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    animateToPage(4);
+                  },
+                  icon: Icon(
+                    UniconsLine.user,
+                    color: _selectedTab == SelectedTab.profile ? Colors.white : AppColor.dark,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

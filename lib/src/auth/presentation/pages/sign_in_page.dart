@@ -1,7 +1,9 @@
 import 'package:donezo/config/theme/app_color.dart';
 import 'package:donezo/core/di/injection_container.dart';
 import 'package:donezo/core/resources/params.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,6 +47,7 @@ class _SignInPageState extends State<SignInPage> {
     const double shadowHeight = 3;
     double position = 4;
     const double buttonHeight = 54 - shadowHeight;
+    final double widthWeb = MediaQuery.of(context).size.width > 600 ? 450 - 24 : MediaQuery.of(context).size.width - 24;
     final double width = MediaQuery.of(context).size.width - 24;
     final double height = MediaQuery.of(context).size.height;
     final double safeAreaPaddingTop = MediaQuery.of(context).padding.top;
@@ -351,92 +354,12 @@ class _SignInPageState extends State<SignInPage> {
                       }
                     }),
                   ],
-                  child: StatefulBuilder(builder: (context, setState) {
-                    return GestureDetector(
-                      onTapUp: (_) {
-                        setState(() {
-                          position = 4;
-                        });
-                      },
-                      onTapDown: (_) {
-                        setState(() {
-                          position = 0;
-                        });
-                      },
-                      onTapCancel: () {
-                        setState(() {
-                          position = 4;
-                        });
-                      },
-                      onTap: () {
-                        context.read<AuthFormBloc>().add(
-                              AuthFormSignInValidateEvent(
-                                email: emailController.text.trim(),
-                                password: passwordController.text,
-                              ),
-                            );
-                      },
-                      child: SizedBox(
-                        height: buttonHeight + shadowHeight,
-                        width: width,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              bottom: 0,
-                              child: Container(
-                                width: width,
-                                height: buttonHeight,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-                            AnimatedPositioned(
-                                bottom: position,
-                                curve: Curves.easeIn,
-                                duration: const Duration(milliseconds: 40),
-                                child: Container(
-                                  width: width,
-                                  height: buttonHeight,
-                                  decoration: BoxDecoration(
-                                    color: AppColor.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 1.3,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: BlocBuilder<AuthBloc, AuthState>(
-                                      builder: (context, state) {
-                                        if (state is AuthLoading) {
-                                          return const SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 3,
-                                            ),
-                                          );
-                                        }
-                                        return const Text(
-                                          'Sign In',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ))
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
+                  child: signInButton(
+                    position,
+                    buttonHeight,
+                    shadowHeight,
+                    (kIsWeb ? widthWeb : width),
+                  ),
                 )
               ],
             ),
@@ -444,5 +367,94 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ),
     );
+  }
+
+  StatefulBuilder signInButton(double position, double buttonHeight, double shadowHeight, double width) {
+    return StatefulBuilder(builder: (context, setState) {
+      return GestureDetector(
+        onTapUp: (_) {
+          setState(() {
+            position = 4;
+          });
+        },
+        onTapDown: (_) {
+          setState(() {
+            position = 0;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            position = 4;
+          });
+        },
+        onTap: () {
+          context.read<AuthFormBloc>().add(
+                AuthFormSignInValidateEvent(
+                  email: emailController.text.trim(),
+                  password: passwordController.text,
+                ),
+              );
+        },
+        child: SizedBox(
+          height: buttonHeight + shadowHeight,
+          width: width,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  width: width,
+                  height: buttonHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                  bottom: position,
+                  curve: Curves.easeIn,
+                  duration: const Duration(milliseconds: 40),
+                  child: Container(
+                    width: width,
+                    height: buttonHeight,
+                    decoration: BoxDecoration(
+                      color: AppColor.primary,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.3,
+                      ),
+                    ),
+                    child: Center(
+                      child: BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthLoading) {
+                            return const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            );
+                          }
+                          return const Text(
+                            'Sign In',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ))
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

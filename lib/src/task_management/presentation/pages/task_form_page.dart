@@ -15,7 +15,23 @@ class TaskFormPage extends StatefulWidget {
 
 class _TaskFormPageState extends State<TaskFormPage> {
   TextEditingController todoController = TextEditingController();
+  FocusNode todoFocusNode = FocusNode();
   List<DateTime?> _singleDatePickerValueWithDefaultValue = [];
+
+  @override
+  void initState() {
+    todoController = TextEditingController();
+    todoFocusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    todoController.dispose();
+    todoFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,38 +133,8 @@ class _TaskFormPageState extends State<TaskFormPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Text('Add Todo List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          if (todoController.text.isNotEmpty) {
-                            context.read<AddTodoListBloc>().add(AddTodoStoreToListEvent(todo: todoController.text));
-                            todoController.clear();
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColor.primary,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black,
-                                offset: Offset(2, 3),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.black,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                  const SizedBox(height: 30),
+                  const Text('Add Todo List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
@@ -169,9 +155,11 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         if (value.isNotEmpty) {
                           context.read<AddTodoListBloc>().add(AddTodoStoreToListEvent(todo: todoController.text));
                           todoController.clear();
+                          todoFocusNode.requestFocus();
                         }
                       },
                       controller: todoController,
+                      focusNode: todoFocusNode,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
@@ -181,6 +169,31 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         contentPadding: const EdgeInsets.only(left: 12),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (todoController.text.isNotEmpty) {
+                              context.read<AddTodoListBloc>().add(AddTodoStoreToListEvent(todo: todoController.text));
+                              todoController.clear();
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: const BoxDecoration(
+                              color: AppColor.primary,
+                              borderRadius: BorderRadius.horizontal(right: Radius.circular(8), left: Radius.circular(0)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black,
+                                  offset: Offset(2, 3),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
