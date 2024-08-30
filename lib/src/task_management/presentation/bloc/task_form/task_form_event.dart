@@ -8,3 +8,12 @@ sealed class TaskFormEvent extends Equatable {
 
   
 }
+
+class TaskFormAddCategory extends TaskFormEvent {
+  final String category;
+
+  const TaskFormAddCategory(this.category);
+
+  @override
+  List<Object> get props => [category];
+}

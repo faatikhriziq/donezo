@@ -8,3 +8,16 @@ sealed class TaskFormState extends Equatable {
 }
 
 final class TaskFormInitial extends TaskFormState {}
+
+final class TaskFormAddCategoryLoading extends TaskFormState {}
+
+final class TaskFormAddCategorySuccess extends TaskFormState {}
+
+final class TaskFormAddCategoryError extends TaskFormState {
+  final String message;
+
+  const TaskFormAddCategoryError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

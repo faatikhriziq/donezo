@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:donezo/pages/calendar_page.dart';
 import 'package:donezo/pages/home_page.dart';

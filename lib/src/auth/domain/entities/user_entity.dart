@@ -23,6 +23,15 @@ class UserEntity extends Equatable {
     );
   }
 
+  factory UserEntity.fromUserInfo(List<UserInfo> map) {
+    return UserEntity(
+      map[0].photoURL,
+      id: map[0].uid ?? '',
+      email: map[0].email ?? '',
+      name: map[0].displayName ?? '',
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

@@ -12,4 +12,5 @@ class AppColor {
   static const Color greyText = Color(0xFF838383);
   static const Color redInvalid = Color(0xFFCF0E00);
   static const Color greenValid = Color(0xFF00A86B);
+  static const Color scaffoldBackground = Color(0xFFF1F1F1);
 }

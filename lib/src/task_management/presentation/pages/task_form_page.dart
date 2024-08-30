@@ -1,9 +1,14 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:donezo/config/theme/app_color.dart';
+import 'package:donezo/core/widgets/app_button.dart';
+import 'package:donezo/core/widgets/app_dropdown.dart';
 import 'package:donezo/src/task_management/presentation/bloc/add_todo/add_todo_bloc.dart';
+import 'package:donezo/src/task_management/presentation/widgets/add_category_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/widgets/container_width_inherited.dart';
 import '../widgets/todo_card.dart';
 
 class TaskFormPage extends StatefulWidget {
@@ -15,6 +20,7 @@ class TaskFormPage extends StatefulWidget {
 
 class _TaskFormPageState extends State<TaskFormPage> {
   TextEditingController todoController = TextEditingController();
+
   FocusNode todoFocusNode = FocusNode();
   List<DateTime?> _singleDatePickerValueWithDefaultValue = [];
 
@@ -22,6 +28,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
   void initState() {
     todoController = TextEditingController();
     todoFocusNode = FocusNode();
+
     super.initState();
   }
 
@@ -76,33 +83,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                   const SizedBox(height: 12),
                   _buildCalendarDialogButton(),
                   const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.3,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter task category',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.only(left: 12),
-                      ),
-                    ),
-                  ),
+                  AppDropdownFormField(),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
@@ -132,6 +113,25 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         contentPadding: const EdgeInsets.only(left: 12, top: 12),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  AppButton(
+                    width: kIsWeb ? ContainerWidthInherited.of(context).containerWidth : null,
+                    child: const Text(
+                      'Add Category',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AddCategoryDialog();
+                        },
+                      );
+                    },
                   ),
                   const SizedBox(height: 30),
                   const Text('Add Todo List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),

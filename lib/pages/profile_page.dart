@@ -1,4 +1,5 @@
 import 'package:donezo/config/routes/app_routes.dart';
+import 'package:donezo/core/shared/local_storage/auth_local_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,17 +17,22 @@ class ProfilePage extends StatelessWidget {
         title: const Text('Profile Page'),
       ),
       body: Center(
-          child: ElevatedButton(
-        onPressed: () async {
-          final firebaseAuth = sl<FirebaseAuth>();
-          final googleSignIn = sl<GoogleSignIn>();
-          await googleSignIn.signOut();
-          await firebaseAuth.signOut();
-          if (!context.mounted) return;
-          context.go(AppRoutes.signIn);
-        },
-        child: const Text('Sign Out'),
-      )),
+          child: Column(
+            children: [
+              ElevatedButton(
+                      onPressed: () async {
+              final firebaseAuth = sl<FirebaseAuth>();
+              final googleSignIn = sl<GoogleSignIn>();
+              await googleSignIn.signOut();
+              await firebaseAuth.signOut();
+              await deleteUserId();
+              if (!context.mounted) return;
+              context.go(AppRoutes.signIn);
+                      },
+                      child: const Text('Sign Out'),
+                    ),
+            ],
+          )),
     );
   }
 }

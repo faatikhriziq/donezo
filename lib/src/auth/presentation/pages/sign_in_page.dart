@@ -3,7 +3,6 @@ import 'package:donezo/core/di/injection_container.dart';
 import 'package:donezo/core/resources/params.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -68,12 +67,12 @@ class _SignInPageState extends State<SignInPage> {
                   height: 100,
                 ),
                 const SizedBox(height: 12),
-                Image(
+                const Image(
                   image: AssetImage('assets/images/logo-text.png'),
                   width: 150,
                   height: 50,
                 ),
-                SizedBox(height: 45),
+                const SizedBox(height: 45),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
                     return CommonTextField(

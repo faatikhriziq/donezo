@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:donezo/config/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,7 +21,7 @@ ThemeData appTheme() {
         900: const Color(0xFF0D47A1),
       }),
     ),
-    scaffoldBackgroundColor: const Color(0xFFF1F1F1),
+    scaffoldBackgroundColor: AppColor.scaffoldBackground,
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFFF1F1F1),
       elevation: 0,

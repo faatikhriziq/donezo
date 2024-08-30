@@ -15,6 +15,7 @@ class AuthCredentialEntity extends Equatable {
     );
   }
   
+  
   @override
   
   List<Object?> get props => [accessToken, idToken];
