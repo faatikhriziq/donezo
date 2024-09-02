@@ -8,12 +8,13 @@ import '../datasources/task_datasource.dart';
 class TaskRepositoryImpl implements TaskRepository {
   final TaskDatasource _taskDatasource;
 
-  TaskRepositoryImpl({required TaskDatasource taskDatasource}) : _taskDatasource = taskDatasource;
+  TaskRepositoryImpl({required TaskDatasource taskDatasource})
+      : _taskDatasource = taskDatasource;
 
   @override
-  Future<DataState<String>> addCategory(String name) async{
+  Future<DataState<String>> addCategory(String name) async {
     try {
-      final result = await _taskDatasource.addCategory(name);
+      await _taskDatasource.addCategory(name);
       return DataState.success(name);
     } catch (e) {
       return DataState.error('Failed to add category : $e');
@@ -31,5 +32,4 @@ class TaskRepositoryImpl implements TaskRepository {
     // TODO: implement addTodoTask
     throw UnimplementedError();
   }
-
 }

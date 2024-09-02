@@ -5,8 +5,6 @@ sealed class TaskFormEvent extends Equatable {
 
   @override
   List<Object> get props => [];
-
-  
 }
 
 class TaskFormAddCategory extends TaskFormEvent {
@@ -17,3 +15,5 @@ class TaskFormAddCategory extends TaskFormEvent {
   @override
   List<Object> get props => [category];
 }
+
+class TaskFormGetCategories extends TaskFormEvent {}

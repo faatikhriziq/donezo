@@ -4,36 +4,24 @@ import 'package:donezo/core/widgets/common_text_field.dart';
 import 'package:flutter/material.dart';
 
 class AddCategoryDialog extends StatefulWidget {
-  const AddCategoryDialog({super.key});
+  final Function() onTap;
+  final TextEditingController controller;
+  const AddCategoryDialog(
+      {super.key, required this.onTap, required this.controller});
 
   @override
   State<AddCategoryDialog> createState() => _AddCategoryDialogState();
 }
 
 class _AddCategoryDialogState extends State<AddCategoryDialog> {
-  TextEditingController controller = TextEditingController();
-  FocusNode focusNode = FocusNode();
-
-  @override
-  void initState() {
-    controller = TextEditingController();
-    focusNode = FocusNode();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: LayoutBuilder(builder: (context, constraints) {
         return Container(
-          width: MediaQuery.of(context).size.width > 600 ? 410.0 : MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width > 600
+              ? 410.0
+              : MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: AppColor.scaffoldBackground,
@@ -46,13 +34,16 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
               const SizedBox(height: 16),
               CommonTextField(
                 hintText: 'Enter category name',
-                controller: controller,
+                controller: widget.controller,
               ),
               const SizedBox(height: 16),
               AppButton(
-                width: MediaQuery.of(context).size.width > 600 ? 410.0 - 12 : MediaQuery.of(context).size.width - 12,
-                child: const Text('Add', style: TextStyle(fontSize: 20)),
-                onTap: () {},
+                width: constraints.maxWidth - 11,
+                child: const Text(
+                  'Add',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                onTap: widget.onTap,
               ),
             ],
           ),

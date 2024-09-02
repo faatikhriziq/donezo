@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:donezo/config/theme/app_color.dart';
 import 'package:donezo/core/widgets/app_button.dart';
 import 'package:donezo/core/widgets/app_dropdown.dart';
 import 'package:donezo/src/task_management/presentation/bloc/add_todo/add_todo_bloc.dart';
+import 'package:donezo/src/task_management/presentation/bloc/task_form/task_form_bloc.dart';
 import 'package:donezo/src/task_management/presentation/widgets/add_category_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,16 +23,18 @@ class TaskFormPage extends StatefulWidget {
 
 class _TaskFormPageState extends State<TaskFormPage> {
   TextEditingController todoController = TextEditingController();
+  TextEditingController addCategoryFormController = TextEditingController();
+  List<String> categories = [];
 
   FocusNode todoFocusNode = FocusNode();
   List<DateTime?> _singleDatePickerValueWithDefaultValue = [];
 
   @override
   void initState() {
+    super.initState();
     todoController = TextEditingController();
     todoFocusNode = FocusNode();
-
-    super.initState();
+    context.read<TaskFormBloc>().add(TaskFormGetCategories());
   }
 
   @override
@@ -41,6 +46,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    log("TaskFormPage build");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Task'),
@@ -83,7 +89,26 @@ class _TaskFormPageState extends State<TaskFormPage> {
                   const SizedBox(height: 12),
                   _buildCalendarDialogButton(),
                   const SizedBox(height: 12),
-                  AppDropdownFormField(),
+                  BlocListener<TaskFormBloc, TaskFormState>(
+                    listener: (context, state) {
+                      if (state is TaskFormCategorySuccess) {
+                        categories = state.categories;
+                      }
+                    },
+                    child: AppDropdownFormField(
+                      hint: 'Select Category',
+                      items: categories
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              alignment: Alignment.center,
+                              child: Text(e),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {},
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
@@ -110,13 +135,16 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           borderSide: BorderSide.none,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        contentPadding: const EdgeInsets.only(left: 12, top: 12),
+                        contentPadding:
+                            const EdgeInsets.only(left: 12, top: 12),
                       ),
                     ),
                   ),
                   const SizedBox(height: 12),
                   AppButton(
-                    width: kIsWeb ? ContainerWidthInherited.of(context).containerWidth : null,
+                    width: kIsWeb
+                        ? ContainerWidthInherited.of(context).containerWidth
+                        : null,
                     child: const Text(
                       'Add Category',
                       style: TextStyle(
@@ -128,13 +156,31 @@ class _TaskFormPageState extends State<TaskFormPage> {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return const AddCategoryDialog();
+                          return AddCategoryDialog(
+                            controller: addCategoryFormController,
+                            onTap: () {
+                              if (addCategoryFormController.text.isNotEmpty) {
+                                context
+                                    .read<TaskFormBloc>()
+                                    .add(TaskFormAddCategory(
+                                      addCategoryFormController.text,
+                                    ));
+                                addCategoryFormController.clear();
+                                context
+                                    .read<TaskFormBloc>()
+                                    .add(TaskFormGetCategories());
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          );
                         },
                       );
                     },
                   ),
                   const SizedBox(height: 30),
-                  const Text('Add Todo List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  const Text('Add Todo List',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
@@ -153,7 +199,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
                     child: TextFormField(
                       onFieldSubmitted: (value) {
                         if (value.isNotEmpty) {
-                          context.read<AddTodoListBloc>().add(AddTodoStoreToListEvent(todo: todoController.text));
+                          context.read<AddTodoListBloc>().add(
+                              AddTodoStoreToListEvent(
+                                  todo: todoController.text));
                           todoController.clear();
                           todoFocusNode.requestFocus();
                         }
@@ -172,7 +220,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         suffixIcon: GestureDetector(
                           onTap: () {
                             if (todoController.text.isNotEmpty) {
-                              context.read<AddTodoListBloc>().add(AddTodoStoreToListEvent(todo: todoController.text));
+                              context.read<AddTodoListBloc>().add(
+                                  AddTodoStoreToListEvent(
+                                      todo: todoController.text));
                               todoController.clear();
                             }
                           },
@@ -180,7 +230,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
                             padding: const EdgeInsets.all(12),
                             decoration: const BoxDecoration(
                               color: AppColor.primary,
-                              borderRadius: BorderRadius.horizontal(right: Radius.circular(8), left: Radius.circular(0)),
+                              borderRadius: BorderRadius.horizontal(
+                                  right: Radius.circular(8),
+                                  left: Radius.circular(0)),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black,
@@ -200,7 +252,8 @@ class _TaskFormPageState extends State<TaskFormPage> {
                   const SizedBox(height: 12),
                   const Text('List of Todos'),
                   const SizedBox(height: 12),
-                  BlocBuilder<AddTodoListBloc, AddTodoState>(builder: (context, state) {
+                  BlocBuilder<AddTodoListBloc, AddTodoState>(
+                      builder: (context, state) {
                     if (state is AddTodoInitial) {
                       return Column(
                         children: List<Widget>.generate(
@@ -257,8 +310,10 @@ class _TaskFormPageState extends State<TaskFormPage> {
   }
 
   _buildCalendarDialogButton() {
-    const dayTextStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
-    final weekendTextStyle = TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600);
+    const dayTextStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
+    final weekendTextStyle =
+        TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600);
     final anniversaryTextStyle = TextStyle(
       color: Colors.red[400],
       fontWeight: FontWeight.w700,
@@ -285,7 +340,8 @@ class _TaskFormPageState extends State<TaskFormPage> {
       selectedDayTextStyle: dayTextStyle.copyWith(color: Colors.white),
       dayTextStylePredicate: ({required date}) {
         TextStyle? textStyle;
-        if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
+        if (date.weekday == DateTime.saturday ||
+            date.weekday == DateTime.sunday) {
           textStyle = weekendTextStyle;
         }
         if (DateUtils.isSameDay(date, DateTime(2021, 1, 25))) {
@@ -320,7 +376,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
                       width: 4,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: isSelected == true ? Colors.white : Colors.grey[500],
+                        color: isSelected == true
+                            ? Colors.white
+                            : Colors.grey[500],
                       ),
                     ),
                   ),
@@ -451,15 +509,24 @@ class _TaskFormPageState extends State<TaskFormPage> {
     CalendarDatePicker2Type datePickerType,
     List<DateTime?> values,
   ) {
-    values = values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
-    var valueText = (values.isNotEmpty ? values[0] : null).toString().replaceAll('00:00:00.000', '');
+    values =
+        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+    var valueText = (values.isNotEmpty ? values[0] : null)
+        .toString()
+        .replaceAll('00:00:00.000', '');
 
     if (datePickerType == CalendarDatePicker2Type.multi) {
-      valueText = values.isNotEmpty ? values.map((v) => v.toString().replaceAll('00:00:00.000', '')).join(', ') : 'null';
+      valueText = values.isNotEmpty
+          ? values
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
+          : 'null';
     } else if (datePickerType == CalendarDatePicker2Type.range) {
       if (values.isNotEmpty) {
         final startDate = values[0].toString().replaceAll('00:00:00.000', '');
-        final endDate = values.length > 1 ? values[1].toString().replaceAll('00:00:00.000', '') : 'null';
+        final endDate = values.length > 1
+            ? values[1].toString().replaceAll('00:00:00.000', '')
+            : 'null';
         valueText = '$startDate to $endDate';
       } else {
         return 'null';
