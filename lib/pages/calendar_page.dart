@@ -9,7 +9,7 @@ class CalendarPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Calendar Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Calendar Page'),
       ),
     );

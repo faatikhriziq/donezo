@@ -12,16 +12,6 @@ class TaskRepositoryImpl implements TaskRepository {
       : _taskDatasource = taskDatasource;
 
   @override
-  Future<DataState<String>> addCategory(String name) async {
-    try {
-      await _taskDatasource.addCategory(name);
-      return DataState.success(name);
-    } catch (e) {
-      return DataState.error('Failed to add category : $e');
-    }
-  }
-
-  @override
   Future<TaskEntity> addTask() {
     // TODO: implement addTask
     throw UnimplementedError();
@@ -31,5 +21,15 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<TodoEntity> addTodoTask() {
     // TODO: implement addTodoTask
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState<String>> addCategory(String name) async {
+    try {
+      await _taskDatasource.addCategory(name);
+      return DataState.success(name);
+    } catch (e) {
+      return DataState.error('Failed to add category : $e');
+    }
   }
 }

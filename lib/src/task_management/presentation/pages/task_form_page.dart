@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:donezo/config/theme/app_color.dart';
+import 'package:donezo/core/utils/screen_util.dart';
 import 'package:donezo/core/widgets/app_button.dart';
 import 'package:donezo/core/widgets/app_dropdown.dart';
 import 'package:donezo/src/task_management/presentation/bloc/add_todo/add_todo_bloc.dart';
@@ -31,10 +32,16 @@ class _TaskFormPageState extends State<TaskFormPage> {
 
   @override
   void initState() {
-    super.initState();
     todoController = TextEditingController();
     todoFocusNode = FocusNode();
-    context.read<TaskFormBloc>().add(TaskFormGetCategories());
+    _getCategoryList();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getCategoryList();
   }
 
   @override
@@ -42,6 +49,10 @@ class _TaskFormPageState extends State<TaskFormPage> {
     todoController.dispose();
     todoFocusNode.dispose();
     super.dispose();
+  }
+
+  void _getCategoryList() {
+    context.read<TaskFormBloc>().add(TaskFormGetCategories());
   }
 
   @override
@@ -53,237 +64,267 @@ class _TaskFormPageState extends State<TaskFormPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Form(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.3,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            children: [
+              Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: Colors.black,
-                          offset: Offset(0, 3),
+                          width: 1.3,
                         ),
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter task title',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintStyle: const TextStyle(color: Colors.black54),
+                          hintText: 'Enter task title',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.only(left: 12),
                         ),
-                        contentPadding: const EdgeInsets.only(left: 12),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildCalendarDialogButton(),
-                  const SizedBox(height: 12),
-                  BlocListener<TaskFormBloc, TaskFormState>(
-                    listener: (context, state) {
-                      if (state is TaskFormCategorySuccess) {
-                        categories = state.categories;
-                      }
-                    },
-                    child: AppDropdownFormField(
-                      hint: 'Select Category',
-                      items: categories
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e,
-                              alignment: Alignment.center,
-                              child: Text(e),
+                    const SizedBox(height: 12),
+                    _buildCalendarDialogButton(),
+                    const SizedBox(height: 12),
+                    BlocListener<TaskFormBloc, TaskFormState>(
+                      listener: (context, state) {
+                        if (state is TaskFormCategorySuccess) {
+                          setState(() {
+                            categories = state.categories;
+                          });
+                        }
+                      },
+                      child: AppDropdownFormField(
+                        hint: 'Select Category',
+                        items: categories
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                alignment: Alignment.center,
+                                child: Text(e),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 1.3,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextFormField(
+                        minLines: 4,
+                        maxLines: 12,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintStyle: const TextStyle(color: Colors.black54),
+                          hintText: 'Add note /description here...',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding:
+                              const EdgeInsets.only(left: 12, top: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    BlocListener<TaskFormBloc, TaskFormState>(
+                      listener: (context, state) {
+                        if (state is TaskFormAddCategoryError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              width: constraints.maxWidth,
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) {},
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.3,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 3),
+                          );
+                        } else if (state is TaskFormAddCategorySuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('${state.category} category is added'),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              width: constraints.maxWidth,
+                            ),
+                          );
+                        }
+                      },
+                      child: AppButton(
+                        width: kIsWeb
+                            ? ContainerWidthInherited.of(context).containerWidth
+                            : null,
+                        child: const Text(
+                          'Add Category',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextFormField(
-                      minLines: 4,
-                      maxLines: 12,
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Add note /description here...',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding:
-                            const EdgeInsets.only(left: 12, top: 12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  AppButton(
-                    width: kIsWeb
-                        ? ContainerWidthInherited.of(context).containerWidth
-                        : null,
-                    child: const Text(
-                      'Add Category',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AddCategoryDialog(
-                            controller: addCategoryFormController,
-                            onTap: () {
-                              if (addCategoryFormController.text.isNotEmpty) {
-                                context
-                                    .read<TaskFormBloc>()
-                                    .add(TaskFormAddCategory(
-                                      addCategoryFormController.text,
-                                    ));
-                                addCategoryFormController.clear();
-                                context
-                                    .read<TaskFormBloc>()
-                                    .add(TaskFormGetCategories());
-                                Navigator.of(context).pop();
-                              }
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AddCategoryDialog(
+                                controller: addCategoryFormController,
+                                onTap: () {
+                                  if (addCategoryFormController
+                                      .text.isNotEmpty) {
+                                    context
+                                        .read<TaskFormBloc>()
+                                        .add(TaskFormAddCategory(
+                                          addCategoryFormController.text,
+                                        ));
+                                    addCategoryFormController.clear();
+                                    _getCategoryList();
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              );
                             },
                           );
                         },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  const Text('Add Todo List',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.3,
                       ),
-                      boxShadow: const [
-                        BoxShadow(
+                    ),
+                    const SizedBox(height: 30),
+                    const Text('Add Todo List',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: Colors.black,
-                          offset: Offset(0, 3),
+                          width: 1.3,
                         ),
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextFormField(
-                      onFieldSubmitted: (value) {
-                        if (value.isNotEmpty) {
-                          context.read<AddTodoListBloc>().add(
-                              AddTodoStoreToListEvent(
-                                  todo: todoController.text));
-                          todoController.clear();
-                          todoFocusNode.requestFocus();
-                        }
-                      },
-                      controller: todoController,
-                      focusNode: todoFocusNode,
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter a todo',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.only(left: 12),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            if (todoController.text.isNotEmpty) {
-                              context.read<AddTodoListBloc>().add(
-                                  AddTodoStoreToListEvent(
-                                      todo: todoController.text));
-                              todoController.clear();
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: const BoxDecoration(
-                              color: AppColor.primary,
-                              borderRadius: BorderRadius.horizontal(
-                                  right: Radius.circular(8),
-                                  left: Radius.circular(0)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black,
-                                  offset: Offset(2, 3),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.black,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextFormField(
+                        onFieldSubmitted: (value) {
+                          if (value.isNotEmpty) {
+                            context.read<AddTodoListBloc>().add(
+                                AddTodoStoreToListEvent(
+                                    todo: todoController.text));
+                            todoController.clear();
+                            todoFocusNode.requestFocus();
+                          }
+                        },
+                        controller: todoController,
+                        focusNode: todoFocusNode,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintStyle: const TextStyle(color: Colors.black54),
+                          hintText: 'Enter a todo',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.only(left: 12),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              if (todoController.text.isNotEmpty) {
+                                context.read<AddTodoListBloc>().add(
+                                    AddTodoStoreToListEvent(
+                                        todo: todoController.text));
+                                todoController.clear();
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                color: AppColor.primary,
+                                borderRadius: BorderRadius.horizontal(
+                                    right: Radius.circular(8),
+                                    left: Radius.circular(0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    offset: Offset(2, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text('List of Todos'),
-                  const SizedBox(height: 12),
-                  BlocBuilder<AddTodoListBloc, AddTodoState>(
-                      builder: (context, state) {
-                    if (state is AddTodoInitial) {
-                      return Column(
-                        children: List<Widget>.generate(
-                          state.todoList.length,
-                          (index) => TodoCard(
-                            index: index,
-                            title: state.todoList[index],
+                    const SizedBox(height: 12),
+                    const Text('List of Todos'),
+                    const SizedBox(height: 12),
+                    BlocBuilder<AddTodoListBloc, AddTodoState>(
+                        builder: (context, state) {
+                      if (state is AddTodoInitial) {
+                        return Column(
+                          children: List<Widget>.generate(
+                            state.todoList.length,
+                            (index) => TodoCard(
+                              index: index,
+                              title: state.todoList[index],
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                    if (state is AddTodoList) {
-                      return Column(
-                        children: List<Widget>.generate(
-                          state.todoList.length,
-                          (index) => TodoCard(
-                            index: index,
-                            title: state.todoList[index],
+                        );
+                      }
+                      if (state is AddTodoList) {
+                        return Column(
+                          children: List<Widget>.generate(
+                            state.todoList.length,
+                            (index) => TodoCard(
+                              index: index,
+                              title: state.todoList[index],
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                    return const SizedBox();
-                  }),
-                  const SizedBox(height: 70),
-                ],
+                        );
+                      }
+                      return const SizedBox();
+                    }),
+                    const SizedBox(height: 70),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
       floatingActionButton: GestureDetector(
         onTap: () {},
@@ -306,6 +347,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -452,7 +494,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
         }
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         height: 50,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -475,7 +517,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
           children: [
             Text(
               _singleDatePickerValueWithDefaultValue.isEmpty
-                  ? 'Select Date'
+                  ? 'Select due date'
                   : _getValueText(
                       CalendarDatePicker2Type.single,
                       _singleDatePickerValueWithDefaultValue,

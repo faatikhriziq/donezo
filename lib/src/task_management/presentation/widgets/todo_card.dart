@@ -70,10 +70,12 @@ class TodoCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
-              context.read<AddTodoListBloc>().add(AddTodoRemoveFromListEvent(todo: title, index: index));
+              context
+                  .read<AddTodoListBloc>()
+                  .add(AddTodoRemoveFromListEvent(todo: title, index: index));
             },
             child: Container(
               padding: const EdgeInsets.all(8),

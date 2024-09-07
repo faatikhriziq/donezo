@@ -97,17 +97,17 @@ class _HomePageState extends State<HomePage> {
             ),
             Container(
               padding: const EdgeInsets.all(12),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Recent Task',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TaskCard(
                     category: 'Digital Product Design',
                     percent: 0.40,

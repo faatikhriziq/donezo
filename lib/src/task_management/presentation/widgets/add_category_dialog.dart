@@ -39,11 +39,11 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
               const SizedBox(height: 16),
               AppButton(
                 width: constraints.maxWidth - 11,
+                onTap: widget.onTap,
                 child: const Text(
                   'Add',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                onTap: widget.onTap,
               ),
             ],
           ),

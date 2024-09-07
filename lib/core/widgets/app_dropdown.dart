@@ -30,6 +30,7 @@ class AppDropdownFormField extends StatelessWidget {
           decoration: InputDecoration(
             fillColor: Colors.white,
             filled: true,
+            hintStyle: const TextStyle(color: Colors.black54),
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(8),

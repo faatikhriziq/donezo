@@ -9,7 +9,7 @@ class KanbanPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Kanban Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Kanban Page'),
       ),
     );

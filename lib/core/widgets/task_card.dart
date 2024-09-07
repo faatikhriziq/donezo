@@ -43,31 +43,31 @@ class TaskCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 category,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     UniconsLine.check_circle,
                     size: 15,
                     color: Colors.black,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     '$task Task',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -83,7 +83,7 @@ class TaskCard extends StatelessWidget {
             radius: 35.0,
             lineWidth: 7.0,
             percent: percent,
-            center:  Text(textPercent),
+            center: Text(textPercent),
             progressColor: Colors.green,
           )
         ],

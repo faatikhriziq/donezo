@@ -11,7 +11,14 @@ final class TaskFormInitial extends TaskFormState {}
 
 final class TaskFormAddCategoryLoading extends TaskFormState {}
 
-final class TaskFormAddCategorySuccess extends TaskFormState {}
+final class TaskFormAddCategorySuccess extends TaskFormState {
+  final String category;
+
+  const TaskFormAddCategorySuccess({required this.category});
+
+  @override
+  List<Object> get props => [category];
+}
 
 final class TaskFormAddCategoryError extends TaskFormState {
   final String message;

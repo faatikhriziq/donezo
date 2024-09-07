@@ -55,7 +55,9 @@ class _SignUpPageState extends State<SignUpPage> {
     const double shadowHeight = 3;
     double position = 4;
     const double buttonHeight = 54 - shadowHeight;
-    final double widthWeb = MediaQuery.of(context).size.width > 600 ? 450 - 24 : MediaQuery.of(context).size.width - 24;
+    final double widthWeb = MediaQuery.of(context).size.width > 600
+        ? 450 - 24
+        : MediaQuery.of(context).size.width - 24;
     final double width = MediaQuery.of(context).size.width - 24;
     final double height = MediaQuery.of(context).size.height;
     final double safeAreaPaddingTop = MediaQuery.of(context).padding.top;
@@ -100,7 +102,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
                     return CommonTextField(
-                      isValid: state is AuthFormSignUpInvalidValidateState && state.message['email']!.isNotEmpty ? false : true,
+                      isValid: state is AuthFormSignUpInvalidValidateState &&
+                              state.message['email']!.isNotEmpty
+                          ? false
+                          : true,
                       focusNode: emailFocusNode,
                       controller: emailController,
                       hintText: 'Enter your email',
@@ -112,7 +117,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 5),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
-                    if (state is AuthFormSignUpInvalidValidateState && state.message['email']!.isNotEmpty) {
+                    if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['email']!.isNotEmpty) {
                       if (state.message.containsKey('email')) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -133,19 +139,24 @@ class _SignUpPageState extends State<SignUpPage> {
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
                     return CommonTextField(
-                      isValid: state is AuthFormSignUpInvalidValidateState && state.message['password']!.isNotEmpty ? false : true,
+                      isValid: state is AuthFormSignUpInvalidValidateState &&
+                              state.message['password']!.isNotEmpty
+                          ? false
+                          : true,
                       focusNode: passwordFocusNode,
                       controller: passwordController,
                       hintText: 'Enter your password',
                       obscureText: true,
-                      onEditingComplete: () => confirmPasswordFocusNode.requestFocus(),
+                      onEditingComplete: () =>
+                          confirmPasswordFocusNode.requestFocus(),
                     );
                   },
                 ),
                 const SizedBox(height: 5),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
-                    if (state is AuthFormSignUpInvalidValidateState && state.message['password']!.isNotEmpty) {
+                    if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['password']!.isNotEmpty) {
                       if (state.message.containsKey('password')) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -165,25 +176,34 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 15),
                 BlocConsumer<AuthFormBloc, AuthFormState>(
                   listener: (context, state) {
-                    if (state is AuthFormSignUpInvalidValidateState && state.message['email']!.isNotEmpty) {
+                    if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['email']!.isNotEmpty) {
                       emailFocusNode.requestFocus();
-                    } else if (state is AuthFormSignUpInvalidValidateState && state.message['password']!.isNotEmpty) {
+                    } else if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['password']!.isNotEmpty) {
                       passwordFocusNode.requestFocus();
-                    } else if (state is AuthFormSignUpInvalidValidateState && state.message['confirmPassword']!.isNotEmpty) {
+                    } else if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['confirmPassword']!.isNotEmpty) {
                       confirmPasswordFocusNode.requestFocus();
-                    } else if (state is AuthFormSignUpValidValidateState && confirmPasswordFocusNode.hasFocus) {
+                    } else if (state is AuthFormSignUpValidValidateState &&
+                        confirmPasswordFocusNode.hasFocus) {
                       confirmPasswordFocusNode.unfocus();
                     }
                   },
                   builder: (context, state) {
                     return CommonTextField(
-                      isValid: state is AuthFormSignUpInvalidValidateState && state.message['confirmPassword']!.isNotEmpty ? false : true,
+                      isValid: state is AuthFormSignUpInvalidValidateState &&
+                              state.message['confirmPassword']!.isNotEmpty
+                          ? false
+                          : true,
                       focusNode: confirmPasswordFocusNode,
                       controller: confirmPasswordController,
                       hintText: 'Confirm your password',
                       obscureText: true,
                       onEditingComplete: () {
-                        context.read<AuthFormBloc>().add(AuthFormSignUpValidateEvent(
+                        context
+                            .read<AuthFormBloc>()
+                            .add(AuthFormSignUpValidateEvent(
                               email: emailController.text.trim(),
                               password: passwordController.text,
                               confirmPassword: confirmPasswordController.text,
@@ -196,7 +216,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 5),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
-                    if (state is AuthFormSignUpInvalidValidateState && state.message['confirmPassword']!.isNotEmpty) {
+                    if (state is AuthFormSignUpInvalidValidateState &&
+                        state.message['confirmPassword']!.isNotEmpty) {
                       if (state.message.containsKey('confirmPassword')) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -227,7 +248,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     InkWell(
                       onTap: () {
                         context.pop();
-                        context.read<AuthFormBloc>().add(AuthFormResetStateEvent());
+                        context
+                            .read<AuthFormBloc>()
+                            .add(AuthFormResetStateEvent());
                       },
                       child: const Text(
                         'Sign In',
@@ -338,7 +361,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           );
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 10,
                           ),
@@ -375,7 +398,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           context.go(AppRoutes.signIn);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('${state.user.email} has been registered successfully!'),
+                              content: Text(
+                                  '${state.user.email} has been registered successfully!'),
                               backgroundColor: AppColor.greenValid,
                             ),
                           );
@@ -391,12 +415,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     BlocListener<AuthFormBloc, AuthFormState>(
                       listener: (context, state) {
-                        if (state is AuthFormSignUpValidValidateState && !confirmPasswordFocusNode.hasFocus) {
+                        if (state is AuthFormSignUpValidValidateState &&
+                            !confirmPasswordFocusNode.hasFocus) {
                           log(emailController.text.trim());
                           final SignUpParams params = sl.get<SignUpParams>();
                           params.email = emailController.text.trim();
                           params.password = passwordController.text;
-                          context.read<AuthBloc>().add(AuthSignUpEvent(signUpParams: params));
+                          context
+                              .read<AuthBloc>()
+                              .add(AuthSignUpEvent(signUpParams: params));
                         }
                       },
                     ),
@@ -416,7 +443,8 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  StatefulBuilder signUpButton(double position, double buttonHeight, double shadowHeight, double width) {
+  StatefulBuilder signUpButton(
+      double position, double buttonHeight, double shadowHeight, double width) {
     return StatefulBuilder(builder: (context, setState) {
       return GestureDetector(
         onTapUp: (_) {
