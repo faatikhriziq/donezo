@@ -7,12 +7,20 @@ part 'add_todo_state.dart';
 class AddTodoListBloc extends Bloc<AddTodoEvent, AddTodoState> {
   AddTodoListBloc() : super(const AddTodoInitial([])) {
     on<AddTodoStoreToListEvent>((event, emit) {
-      final List<String> updatedList = List<String>.from(state.todoList)..add(event.todo);
+      final List<Map<String, dynamic>> updatedList =
+          List<Map<String, dynamic>>.from(state.todoList)
+            ..add({
+              'title': event.todo,
+              'isCompleted': event.isCompleted,
+            });
+
       emit(AddTodoList(updatedList));
     });
 
     on<AddTodoRemoveFromListEvent>((event, emit) {
-      final List<String> updatedList = List<String>.from(state.todoList)..removeAt(event.index);
+      final List<Map<String, dynamic>> updatedList =
+          List<Map<String, dynamic>>.from(state.todoList)
+            ..removeAt(event.index);
       emit(AddTodoList(updatedList));
     });
   }

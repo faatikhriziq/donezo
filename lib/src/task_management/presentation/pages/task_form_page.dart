@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:donezo/config/theme/app_color.dart';
-import 'package:donezo/core/utils/screen_util.dart';
+import 'package:donezo/core/di/injection_container.dart';
 import 'package:donezo/core/widgets/app_button.dart';
 import 'package:donezo/core/widgets/app_dropdown.dart';
 import 'package:donezo/src/task_management/presentation/bloc/add_todo/add_todo_bloc.dart';
@@ -12,7 +12,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/resources/params.dart';
 import '../../../../core/widgets/container_width_inherited.dart';
+import '../../domain/entities/task_entity.dart';
 import '../widgets/todo_card.dart';
 
 class TaskFormPage extends StatefulWidget {
@@ -25,6 +27,13 @@ class TaskFormPage extends StatefulWidget {
 class _TaskFormPageState extends State<TaskFormPage> {
   TextEditingController todoController = TextEditingController();
   TextEditingController addCategoryFormController = TextEditingController();
+  TextEditingController taskTitleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  String? category;
+
+  List<Map<String, dynamic>> todoList = [];
+
+  String taskTitle = 'Task';
   List<String> categories = [];
 
   FocusNode todoFocusNode = FocusNode();
@@ -34,6 +43,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
   void initState() {
     todoController = TextEditingController();
     todoFocusNode = FocusNode();
+    taskTitleController = TextEditingController();
+    descriptionController = TextEditingController();
+
     _getCategoryList();
     super.initState();
   }
@@ -48,6 +60,9 @@ class _TaskFormPageState extends State<TaskFormPage> {
   void dispose() {
     todoController.dispose();
     todoFocusNode.dispose();
+    taskTitleController.dispose();
+    descriptionController.dispose();
+
     super.dispose();
   }
 
@@ -86,6 +101,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextFormField(
+                        controller: taskTitleController,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -97,6 +113,11 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           ),
                           contentPadding: const EdgeInsets.only(left: 12),
                         ),
+                        onChanged: (value) {
+                          setState(() {
+                            taskTitle = value;
+                          });
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -121,7 +142,12 @@ class _TaskFormPageState extends State<TaskFormPage> {
                               ),
                             )
                             .toList(),
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          log('Category selected: $value');
+                          setState(() {
+                            category = value!;
+                          });
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -140,6 +166,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextFormField(
+                        controller: descriptionController,
                         minLines: 4,
                         maxLines: 12,
                         decoration: InputDecoration(
@@ -296,23 +323,32 @@ class _TaskFormPageState extends State<TaskFormPage> {
                         builder: (context, state) {
                       if (state is AddTodoInitial) {
                         return Column(
-                          children: List<Widget>.generate(
-                            state.todoList.length,
-                            (index) => TodoCard(
+                          children: List<Widget>.generate(state.todoList.length,
+                              (index) {
+                            var todo = state.todoList[index];
+                            var title = todo.keys.first;
+                            return TodoCard(
                               index: index,
-                              title: state.todoList[index],
-                            ),
-                          ),
+                              title: title,
+                              taskTitle: taskTitle.isEmpty ? 'Task' : taskTitle,
+                            );
+                          }),
                         );
                       }
                       if (state is AddTodoList) {
                         return Column(
                           children: List<Widget>.generate(
                             state.todoList.length,
-                            (index) => TodoCard(
-                              index: index,
-                              title: state.todoList[index],
-                            ),
+                            (index) {
+                              var todo = state.todoList[index];
+                              var title = todo.keys.first;
+                              return TodoCard(
+                                index: index,
+                                title: title,
+                                taskTitle:
+                                    taskTitle.isEmpty ? 'Task' : taskTitle,
+                              );
+                            },
                           ),
                         );
                       }
@@ -326,24 +362,47 @@ class _TaskFormPageState extends State<TaskFormPage> {
           );
         }),
       ),
-      floatingActionButton: GestureDetector(
-        onTap: () {},
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColor.primary,
-            borderRadius: BorderRadius.circular(60),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(2, 4.5),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.save,
-            size: 28,
-            color: Colors.black,
+      floatingActionButton: BlocListener<AddTodoListBloc, AddTodoState>(
+        listener: (context, state) {
+          if (state is AddTodoList) {
+            setState(() {
+              todoList = state.todoList;
+            });
+          }
+        },
+        child: GestureDetector(
+          onTap: () {
+            log('Todo list: $todoList');
+            // get AddTaskParams from the di
+            final addTaskParams = sl<AddTaskParams>()
+              ..task = sl<TaskEntity>()
+              ..task.title = taskTitleController.text
+              ..task.category = category!
+              ..task.description = descriptionController.text
+              ..task.dueDate = _singleDatePickerValueWithDefaultValue.isNotEmpty
+                  ? _singleDatePickerValueWithDefaultValue[0]!
+                  : DateTime.now()
+              ..todo = todoList;
+
+            context.read<TaskFormBloc>().add(TaskFormAddTask(addTaskParams));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColor.primary,
+              borderRadius: BorderRadius.circular(60),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: Offset(2, 4.5),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.save,
+              size: 28,
+              color: Colors.black,
+            ),
           ),
         ),
       ),

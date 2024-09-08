@@ -46,7 +46,9 @@ class _SignInPageState extends State<SignInPage> {
     const double shadowHeight = 3;
     double position = 4;
     const double buttonHeight = 54 - shadowHeight;
-    final double widthWeb = MediaQuery.of(context).size.width > 600 ? 450 - 24 : MediaQuery.of(context).size.width - 24;
+    final double widthWeb = MediaQuery.of(context).size.width > 600
+        ? 430.0 - 24
+        : MediaQuery.of(context).size.width - 24;
     final double width = MediaQuery.of(context).size.width - 24;
     final double height = MediaQuery.of(context).size.height;
     final double safeAreaPaddingTop = MediaQuery.of(context).padding.top;
@@ -76,7 +78,10 @@ class _SignInPageState extends State<SignInPage> {
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
                     return CommonTextField(
-                      isValid: state is AuthFormSignInInvalidValidateState && state.message['email']!.isNotEmpty ? false : true,
+                      isValid: state is AuthFormSignInInvalidValidateState &&
+                              state.message['email']!.isNotEmpty
+                          ? false
+                          : true,
                       focusNode: emailFocusNode,
                       controller: emailController,
                       hintText: 'Enter your email',
@@ -88,7 +93,8 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 5),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
-                    if (state is AuthFormSignInInvalidValidateState && state.message['email']!.isNotEmpty) {
+                    if (state is AuthFormSignInInvalidValidateState &&
+                        state.message['email']!.isNotEmpty) {
                       if (state.message.containsKey('email')) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -108,17 +114,23 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 15),
                 BlocConsumer<AuthFormBloc, AuthFormState>(
                   listener: (context, state) {
-                    if (state is AuthFormSignInInvalidValidateState && state.message['email']!.isNotEmpty) {
+                    if (state is AuthFormSignInInvalidValidateState &&
+                        state.message['email']!.isNotEmpty) {
                       emailFocusNode.requestFocus();
-                    } else if (state is AuthFormSignInInvalidValidateState && state.message['password']!.isNotEmpty) {
+                    } else if (state is AuthFormSignInInvalidValidateState &&
+                        state.message['password']!.isNotEmpty) {
                       passwordFocusNode.requestFocus();
-                    } else if (state is AuthFormSignInValidValidateState && passwordFocusNode.hasFocus) {
+                    } else if (state is AuthFormSignInValidValidateState &&
+                        passwordFocusNode.hasFocus) {
                       passwordFocusNode.unfocus();
                     }
                   },
                   builder: (context, state) {
                     return CommonTextField(
-                      isValid: state is AuthFormSignInInvalidValidateState && state.message['password']!.isNotEmpty ? false : true,
+                      isValid: state is AuthFormSignInInvalidValidateState &&
+                              state.message['password']!.isNotEmpty
+                          ? false
+                          : true,
                       focusNode: passwordFocusNode,
                       controller: passwordController,
                       hintText: 'Enter your password',
@@ -138,7 +150,8 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 5),
                 BlocBuilder<AuthFormBloc, AuthFormState>(
                   builder: (context, state) {
-                    if (state is AuthFormSignInInvalidValidateState && state.message['password']!.isNotEmpty) {
+                    if (state is AuthFormSignInInvalidValidateState &&
+                        state.message['password']!.isNotEmpty) {
                       if (state.message.containsKey('password')) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -229,7 +242,9 @@ class _SignInPageState extends State<SignInPage> {
                         },
                         child: GestureDetector(
                           onTap: () {
-                            context.read<AuthBloc>().add(const AuthSignInWithGoogleEvent());
+                            context
+                                .read<AuthBloc>()
+                                .add(const AuthSignInWithGoogleEvent());
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -344,12 +359,16 @@ class _SignInPageState extends State<SignInPage> {
                         }
                       },
                     ),
-                    BlocListener<AuthFormBloc, AuthFormState>(listener: (context, state) {
-                      if (state is AuthFormSignInValidValidateState && !passwordFocusNode.hasFocus) {
+                    BlocListener<AuthFormBloc, AuthFormState>(
+                        listener: (context, state) {
+                      if (state is AuthFormSignInValidValidateState &&
+                          !passwordFocusNode.hasFocus) {
                         final signInParams = sl.get<SignInParams>();
                         signInParams.email = emailController.text.trim();
                         signInParams.password = passwordController.text;
-                        context.read<AuthBloc>().add(AuthSignInEvent(signInParams: signInParams));
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthSignInEvent(signInParams: signInParams));
                       }
                     }),
                   ],
@@ -368,7 +387,8 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  StatefulBuilder signInButton(double position, double buttonHeight, double shadowHeight, double width) {
+  StatefulBuilder signInButton(
+      double position, double buttonHeight, double shadowHeight, double width) {
     return StatefulBuilder(builder: (context, setState) {
       return GestureDetector(
         onTapUp: (_) {

@@ -1,3 +1,6 @@
+import 'package:donezo/src/task_management/domain/entities/task_entity.dart';
+import 'package:donezo/src/task_management/domain/entities/todo_entity.dart';
+
 abstract class Params {}
 
 class NoParams extends Params {}
@@ -19,5 +22,15 @@ class SignInParams extends Params {
   SignInParams({
     required this.email,
     required this.password,
+  });
+}
+
+class AddTaskParams extends Params {
+  TaskEntity task;
+  List<Map<String, dynamic>> todo;
+
+  AddTaskParams({
+    required this.task,
+    required this.todo,
   });
 }

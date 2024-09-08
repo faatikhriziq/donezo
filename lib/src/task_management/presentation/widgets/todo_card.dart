@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unicons/unicons.dart';
@@ -8,10 +9,12 @@ import '../bloc/add_todo/add_todo_bloc.dart';
 class TodoCard extends StatelessWidget {
   final String title;
   final int index;
+  final String taskTitle;
   const TodoCard({
     super.key,
-    required this.index,
     required this.title,
+    required this.index,
+    required this.taskTitle,
   });
 
   @override
@@ -49,17 +52,17 @@ class TodoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       UniconsLine.check_circle,
                       size: 15,
                       color: Colors.black,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
-                      'Task',
-                      style: TextStyle(
+                      taskTitle,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

@@ -9,15 +9,15 @@ sealed class AddTodoEvent extends Equatable {
 
 final class AddTodoStoreToListEvent extends AddTodoEvent {
   final String todo;
+  final bool isCompleted;
 
   const AddTodoStoreToListEvent({
     required this.todo,
+    this.isCompleted = false,
   });
 
   @override
-  List<Object> get props => [
-        todo
-      ];
+  List<Object> get props => [todo, isCompleted];
 }
 
 final class AddTodoRemoveFromListEvent extends AddTodoEvent {
@@ -30,9 +30,7 @@ final class AddTodoRemoveFromListEvent extends AddTodoEvent {
   });
 
   @override
-  List<Object> get props => [
-        todo
-      ];
+  List<Object> get props => [todo];
 }
 
 final class AddTodoStoreToDatabase extends AddTodoEvent {

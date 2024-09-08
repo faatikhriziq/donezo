@@ -38,7 +38,9 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
               ),
               const SizedBox(height: 16),
               AppButton(
-                width: constraints.maxWidth - 11,
+                width: MediaQuery.of(context).size.width > 600
+                    ? 410.0 - 12
+                    : constraints.maxWidth - 12,
                 onTap: widget.onTap,
                 child: const Text(
                   'Add',

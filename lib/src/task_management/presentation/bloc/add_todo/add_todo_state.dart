@@ -1,9 +1,9 @@
 part of 'add_todo_bloc.dart';
 
 sealed class AddTodoState extends Equatable {
-  final List<String> todoList;
+  final List<Map<String, dynamic>> todoList;
   const AddTodoState(this.todoList);
-  
+
   @override
   List<Object> get props => [];
 }
@@ -14,8 +14,6 @@ final class AddTodoInitial extends AddTodoState {
 
 final class AddTodoList extends AddTodoState {
   const AddTodoList(super.todoList);
-
- 
 
   @override
   List<Object> get props => [todoList];

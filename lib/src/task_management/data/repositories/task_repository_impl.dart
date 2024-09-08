@@ -12,9 +12,23 @@ class TaskRepositoryImpl implements TaskRepository {
       : _taskDatasource = taskDatasource;
 
   @override
-  Future<TaskEntity> addTask() {
-    // TODO: implement addTask
-    throw UnimplementedError();
+  Future<DataState<TaskEntity>> addTask(
+      TaskEntity task, List<Map<String, dynamic>> todo) async {
+    try {
+      await _taskDatasource.addTaskWithTodos(
+          task.title, task.category, task.description, todo);
+      return DataState.success(
+        TaskEntity(
+          title: task.title,
+          category: task.category,
+          description: task.description,
+          dueDate: task.dueDate,
+          isCompleted: task.isCompleted,
+        ),
+      );
+    } catch (e) {
+      return DataState.error('Failed to add task : $e');
+    }
   }
 
   @override

@@ -24,21 +24,22 @@ class AppDropdownFormField extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButtonFormField(
-          dropdownColor: Colors.white,
-          itemHeight: 48,
-          hint: Text(hint ?? 'Select'),
-          decoration: InputDecoration(
-            fillColor: Colors.white,
-            filled: true,
-            hintStyle: const TextStyle(color: Colors.black54),
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            contentPadding: const EdgeInsets.only(left: 12),
+        dropdownColor: Colors.white,
+        itemHeight: 48,
+        hint: Text(hint ?? 'Select'),
+        decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
+          hintStyle: const TextStyle(color: Colors.black54),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(8),
           ),
-          items: items,
-          onChanged: (value) {}),
+          contentPadding: const EdgeInsets.only(left: 12),
+        ),
+        items: items,
+        onChanged: onChanged,
+      ),
     );
   }
 }

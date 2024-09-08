@@ -48,3 +48,23 @@ final class TaskFormCategoryError extends TaskFormState {
   @override
   List<Object> get props => [message];
 }
+
+final class TaskFormAddTaskLoading extends TaskFormState {}
+
+final class TaskFormAddTaskSuccess extends TaskFormState {
+  final TaskEntity task;
+
+  const TaskFormAddTaskSuccess(this.task);
+
+  @override
+  List<Object> get props => [task];
+}
+
+final class TaskFormAddTaskError extends TaskFormState {
+  final String message;
+
+  const TaskFormAddTaskError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

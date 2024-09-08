@@ -17,6 +17,9 @@ import '../../src/auth/data/repositories/auth_repositories_impl.dart';
 import '../../src/auth/domain/repositories/auth_repository.dart';
 import '../../src/auth/domain/usecases/sign_up_use_case.dart';
 import '../../src/auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../src/task_management/domain/entities/task_entity.dart';
+import '../../src/task_management/domain/entities/todo_entity.dart';
+import '../../src/task_management/domain/usecases/add_task_use_case.dart';
 import '../resources/params.dart';
 
 final sl = GetIt.instance;
@@ -45,13 +48,19 @@ void init() async {
   */
 
   // Auth
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoriesImpl(sl(), sl(), sl()));
-  sl.registerLazySingleton<AuthFirebaseDatasource>(() => AuthFirebaseDatasource(sl()));
-  sl.registerLazySingleton<SignUpParams>(() => SignUpParams(email: '', password: ''));
-  sl.registerLazySingleton<SignInParams>(() => SignInParams(email: '', password: ''));
+  sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoriesImpl(sl(), sl(), sl()));
+  sl.registerLazySingleton<AuthFirebaseDatasource>(
+      () => AuthFirebaseDatasource(sl()));
+  sl.registerLazySingleton<SignUpParams>(
+      () => SignUpParams(email: '', password: ''));
+  sl.registerLazySingleton<SignInParams>(
+      () => SignInParams(email: '', password: ''));
   sl.registerLazySingleton<SignUpUseCase>(() => SignUpUseCase(sl()));
-  sl.registerLazySingleton<SignInWithEmailPasswordUseCase>(() => SignInWithEmailPasswordUseCase(sl()));
-  sl.registerLazySingleton<SignInWithGoogleUseCase>(() => SignInWithGoogleUseCase(sl()));
+  sl.registerLazySingleton<SignInWithEmailPasswordUseCase>(
+      () => SignInWithEmailPasswordUseCase(sl()));
+  sl.registerLazySingleton<SignInWithGoogleUseCase>(
+      () => SignInWithGoogleUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(
@@ -64,10 +73,31 @@ void init() async {
     ),
   );
 
-  // Task Management
-  sl.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(taskDatasource: sl()));
-  sl.registerLazySingleton<TaskDatasource>(() => TaskDatasource(firestore: sl()));
-  sl.registerLazySingleton<AddCategoryUseCase>(() => AddCategoryUseCase(taskRepository: sl()));
+  // Entities
+  sl.registerLazySingleton<TaskEntity>(() => TaskEntity(
+        title: '',
+        category: '',
+        description: '',
+        dueDate: DateTime.now(),
+        isCompleted: false,
+      ));
+  sl.registerLazySingleton<TodoEntity>(() => const TodoEntity(todo: ''));
 
-  sl.registerFactory<TaskFormBloc>(() => TaskFormBloc(addCategoryUseCase: sl()));
+  // Task Management
+  sl.registerLazySingleton<TaskRepository>(
+      () => TaskRepositoryImpl(taskDatasource: sl()));
+  sl.registerLazySingleton<TaskDatasource>(
+      () => TaskDatasource(firestore: sl()));
+  sl.registerLazySingleton<AddCategoryUseCase>(
+      () => AddCategoryUseCase(taskRepository: sl()));
+  sl.registerLazySingleton<AddTaskUseCase>(
+      () => AddTaskUseCase(taskRepository: sl()));
+
+  sl.registerFactory<TaskFormBloc>(
+      () => TaskFormBloc(addCategoryUseCase: sl(), addTaskUseCase: sl()));
+  // Params
+  sl.registerLazySingleton<AddTaskParams>(
+      () => AddTaskParams(task: sl(), todo: [
+            {'todo': '', 'isCompleted': false}
+          ]));
 }
