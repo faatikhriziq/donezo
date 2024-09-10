@@ -16,7 +16,7 @@ class TaskRepositoryImpl implements TaskRepository {
       TaskEntity task, List<Map<String, dynamic>> todo) async {
     try {
       await _taskDatasource.addTaskWithTodos(
-          task.title, task.category, task.description, todo);
+          task.title, task.category, task.description, task.dueDate, todo);
       return DataState.success(
         TaskEntity(
           title: task.title,

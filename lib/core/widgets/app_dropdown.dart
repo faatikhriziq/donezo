@@ -4,21 +4,22 @@ class AppDropdownFormField extends StatelessWidget {
   final Function(String?)? onChanged;
   final List<DropdownMenuItem<String>>? items;
   final String? hint;
+  final bool isValid;
   const AppDropdownFormField(
-      {super.key, this.onChanged, this.items, this.hint});
+      {super.key, this.onChanged, this.items, this.hint, this.isValid = true});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.black,
+          color: isValid ? Colors.black : Colors.red,
           width: 1.3,
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black,
-            offset: Offset(0, 3),
+            color: isValid ? Colors.black : Colors.red,
+            offset: const Offset(0, 3),
           ),
         ],
         borderRadius: BorderRadius.circular(8),
@@ -26,11 +27,12 @@ class AppDropdownFormField extends StatelessWidget {
       child: DropdownButtonFormField(
         dropdownColor: Colors.white,
         itemHeight: 48,
-        hint: Text(hint ?? 'Select'),
+        hint: Text(hint ?? 'Select',
+            style: TextStyle(color: isValid ? Colors.black54 : Colors.red)),
         decoration: InputDecoration(
           fillColor: Colors.white,
           filled: true,
-          hintStyle: const TextStyle(color: Colors.black54),
+          hintStyle: TextStyle(color: isValid ? Colors.black : Colors.red),
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(8),

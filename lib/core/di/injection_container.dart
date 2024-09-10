@@ -7,6 +7,7 @@ import 'package:donezo/src/task_management/domain/repositories/task_repository.d
 import 'package:donezo/src/task_management/domain/usecases/add_category_use_case.dart';
 import 'package:donezo/src/task_management/injection.dart';
 import 'package:donezo/src/task_management/presentation/bloc/task_form/task_form_bloc.dart';
+import 'package:donezo/src/task_management/presentation/bloc/task_form_validation/task_form_validation_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -95,6 +96,7 @@ void init() async {
 
   sl.registerFactory<TaskFormBloc>(
       () => TaskFormBloc(addCategoryUseCase: sl(), addTaskUseCase: sl()));
+  sl.registerFactory<TaskFormValidationBloc>(() => TaskFormValidationBloc());
   // Params
   sl.registerLazySingleton<AddTaskParams>(
       () => AddTaskParams(task: sl(), todo: [

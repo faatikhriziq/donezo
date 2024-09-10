@@ -20,7 +20,7 @@ class TaskDatasource {
   }
 
   Future<void> addTaskWithTodos(String title, String category,
-      String description, List<Map<String, dynamic>> todo) async {
+      String description, DateTime dueDate, List<Map<String, dynamic>> todo) async {
     try {
       final collection = _firestore.collection('tasks');
       final userId = await getUserId();
@@ -28,7 +28,7 @@ class TaskDatasource {
       // Tambahkan dokumen task utama ke koleksi 'tasks'
       final taskDocRef = await collection.add({
         'title': title,
-        'dueDate': Timestamp.fromDate(DateTime.now()),
+        'dueDate': Timestamp.fromDate(dueDate),
         'category': category,
         'description': description,
         'userId': userId,

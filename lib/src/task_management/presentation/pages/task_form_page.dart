@@ -7,10 +7,12 @@ import 'package:donezo/core/widgets/app_button.dart';
 import 'package:donezo/core/widgets/app_dropdown.dart';
 import 'package:donezo/src/task_management/presentation/bloc/add_todo/add_todo_bloc.dart';
 import 'package:donezo/src/task_management/presentation/bloc/task_form/task_form_bloc.dart';
+import 'package:donezo/src/task_management/presentation/bloc/task_form_validation/task_form_validation_bloc.dart';
 import 'package:donezo/src/task_management/presentation/widgets/add_category_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/resources/params.dart';
 import '../../../../core/widgets/container_width_inherited.dart';
@@ -62,6 +64,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
     todoFocusNode.dispose();
     taskTitleController.dispose();
     descriptionController.dispose();
+    todoList.clear();
 
     super.dispose();
   }
@@ -86,42 +89,95 @@ class _TaskFormPageState extends State<TaskFormPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.3,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextFormField(
-                        controller: taskTitleController,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          hintStyle: const TextStyle(color: Colors.black54),
-                          hintText: 'Enter task title',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: state is TaskFormValidationInvalid &&
+                                      state.message['taskTitle']!.isNotEmpty
+                                  ? Colors.red
+                                  : Colors.black,
+                              width: 1.3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: state is TaskFormValidationInvalid &&
+                                        state.message['taskTitle']!.isNotEmpty
+                                    ? Colors.red
+                                    : Colors.black,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          contentPadding: const EdgeInsets.only(left: 12),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            taskTitle = value;
-                          });
-                        },
-                      ),
+                          child: TextFormField(
+                            controller: taskTitleController,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: state is TaskFormValidationInvalid &&
+                                          state.message['taskTitle']!.isNotEmpty
+                                      ? Colors.red
+                                      : Colors.black54),
+                              hintText: 'Enter task title',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: const EdgeInsets.only(left: 12),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                taskTitle = value;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        if (state is TaskFormValidationInvalid &&
+                            state.message['taskTitle']!.isNotEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              state.message['taskTitle']!.first,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildCalendarDialogButton(),
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        if (state is TaskFormValidationInvalid &&
+                            state.message['taskDueDate']!.isNotEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              state.message['taskDueDate']!.first,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                     const SizedBox(height: 12),
                     BlocListener<TaskFormBloc, TaskFormState>(
                       listener: (context, state) {
@@ -131,57 +187,120 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           });
                         }
                       },
-                      child: AppDropdownFormField(
-                        hint: 'Select Category',
-                        items: categories
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                alignment: Alignment.center,
-                                child: Text(e),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          log('Category selected: $value');
-                          setState(() {
-                            category = value!;
-                          });
+                      child: BlocBuilder<TaskFormValidationBloc,
+                          TaskFormValidationState>(
+                        builder: (context, state) {
+                          return AppDropdownFormField(
+                            isValid: state is TaskFormValidationInvalid &&
+                                    state.message['taskCategory']!.isNotEmpty
+                                ? false
+                                : true,
+                            hint: 'Select Category',
+                            items: categories
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    alignment: Alignment.center,
+                                    child: Text(e),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              log('Category selected: $value');
+                              setState(() {
+                                category = value!;
+                              });
+                            },
+                          );
                         },
                       ),
                     ),
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        if (state is TaskFormValidationInvalid &&
+                            state.message['taskCategory']!.isNotEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              state.message['taskCategory']!.first,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                     const SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.3,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextFormField(
-                        controller: descriptionController,
-                        minLines: 4,
-                        maxLines: 12,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          hintStyle: const TextStyle(color: Colors.black54),
-                          hintText: 'Add note /description here...',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: state is TaskFormValidationInvalid &&
+                                      state.message['description']!.isNotEmpty
+                                  ? Colors.red
+                                  : Colors.black,
+                              width: 1.3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: state is TaskFormValidationInvalid &&
+                                        state.message['description']!.isNotEmpty
+                                    ? Colors.red
+                                    : Colors.black,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          contentPadding:
-                              const EdgeInsets.only(left: 12, top: 12),
-                        ),
-                      ),
+                          child: TextFormField(
+                            controller: descriptionController,
+                            minLines: 4,
+                            maxLines: 12,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: state is TaskFormValidationInvalid &&
+                                          state.message['description']!
+                                              .isNotEmpty
+                                      ? Colors.red
+                                      : Colors.black54),
+                              hintText: 'Add note /description here...',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.only(left: 12, top: 12),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    BlocBuilder<TaskFormValidationBloc,
+                        TaskFormValidationState>(
+                      builder: (context, state) {
+                        if (state is TaskFormValidationInvalid &&
+                            state.message['description']!.isNotEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              state.message['description']!.first,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
                     const SizedBox(height: 12),
                     BlocListener<TaskFormBloc, TaskFormState>(
@@ -326,7 +445,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           children: List<Widget>.generate(state.todoList.length,
                               (index) {
                             var todo = state.todoList[index];
-                            var title = todo.keys.first;
+                            var title = todo['title'];
                             return TodoCard(
                               index: index,
                               title: title,
@@ -341,7 +460,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                             state.todoList.length,
                             (index) {
                               var todo = state.todoList[index];
-                              var title = todo.keys.first;
+                              var title = todo['title'];
                               return TodoCard(
                                 index: index,
                                 title: title,
@@ -362,29 +481,78 @@ class _TaskFormPageState extends State<TaskFormPage> {
           );
         }),
       ),
-      floatingActionButton: BlocListener<AddTodoListBloc, AddTodoState>(
-        listener: (context, state) {
-          if (state is AddTodoList) {
-            setState(() {
-              todoList = state.todoList;
-            });
-          }
-        },
+      floatingActionButton: MultiBlocListener(
+        listeners: [
+          BlocListener<AddTodoListBloc, AddTodoState>(
+            listener: (context, state) {
+              if (state is AddTodoList) {
+                setState(() {
+                  todoList = state.todoList;
+                });
+              }
+            },
+          ),
+          BlocListener<TaskFormValidationBloc, TaskFormValidationState>(
+            listener: (context, state) {
+              if (state is TaskFormValidationValid) {
+                log("is valid");
+                // get AddTaskParams from the di
+                final addTaskParams = sl<AddTaskParams>()
+                  ..task = sl<TaskEntity>()
+                  ..task.title = taskTitleController.text
+                  ..task.category = category!
+                  ..task.description = descriptionController.text
+                  ..task.dueDate =
+                      _singleDatePickerValueWithDefaultValue.isNotEmpty
+                          ? _singleDatePickerValueWithDefaultValue[0]!
+                          : DateTime.now()
+                  ..todo = todoList;
+                context
+                    .read<TaskFormBloc>()
+                    .add(TaskFormAddTask(addTaskParams));
+              }
+            },
+          ),
+          BlocListener<TaskFormBloc, TaskFormState>(
+            listener: (context, state) {
+              if (state is TaskFormAddTaskSuccess) {
+                GoRouter.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text("Task \"${state.task.title}\" Successfully Added"),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    width: MediaQuery.of(context).size.width > 600
+                        ? 430.0 - 12
+                        : MediaQuery.of(context).size.width - 12,
+                  ),
+                );
+              } else if (state is TaskFormAddTaskError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    width: MediaQuery.of(context).size.width > 600
+                        ? 430.0 - 12
+                        : MediaQuery.of(context).size.width - 12,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
         child: GestureDetector(
           onTap: () {
-            log('Todo list: $todoList');
-            // get AddTaskParams from the di
-            final addTaskParams = sl<AddTaskParams>()
-              ..task = sl<TaskEntity>()
-              ..task.title = taskTitleController.text
-              ..task.category = category!
-              ..task.description = descriptionController.text
-              ..task.dueDate = _singleDatePickerValueWithDefaultValue.isNotEmpty
-                  ? _singleDatePickerValueWithDefaultValue[0]!
-                  : DateTime.now()
-              ..todo = todoList;
-
-            context.read<TaskFormBloc>().add(TaskFormAddTask(addTaskParams));
+            context
+                .read<TaskFormValidationBloc>()
+                .add(TaskFormValidationValidate(
+                  taskTitle: taskTitleController.text,
+                  taskDueDate: _singleDatePickerValueWithDefaultValue,
+                  taskCategory: category,
+                  description: descriptionController.text,
+                ));
           },
           child: Container(
             padding: const EdgeInsets.all(20),
@@ -552,56 +720,74 @@ class _TaskFormPageState extends State<TaskFormPage> {
           });
         }
       },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        height: 50,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Colors.black,
-            width: 1.3,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(0, 3),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              _singleDatePickerValueWithDefaultValue.isEmpty
-                  ? 'Select due date'
-                  : _getValueText(
-                      CalendarDatePicker2Type.single,
-                      _singleDatePickerValueWithDefaultValue,
-                    ),
-              style: const TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.normal,
-                fontSize: 16,
+      child: BlocBuilder<TaskFormValidationBloc, TaskFormValidationState>(
+        builder: (context, state) {
+          return Container(
+            padding: const EdgeInsets.all(12),
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: state is TaskFormValidationInvalid &&
+                        state.message['taskDueDate']!.isNotEmpty
+                    ? Colors.red
+                    : Colors.black,
+                width: 1.3,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: state is TaskFormValidationInvalid &&
+                          state.message['taskDueDate']!.isNotEmpty
+                      ? Colors.red
+                      : Colors.black,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(8),
             ),
-            _singleDatePickerValueWithDefaultValue.isNotEmpty
-                ? InkWell(
-                    onTap: () {
-                      setState(() {
-                        _singleDatePickerValueWithDefaultValue = [];
-                      });
-                    },
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  _singleDatePickerValueWithDefaultValue.isEmpty
+                      ? 'Select due date'
+                      : _getValueText(
+                          CalendarDatePicker2Type.single,
+                          _singleDatePickerValueWithDefaultValue,
+                        ),
+                  style: TextStyle(
+                    color: state is TaskFormValidationInvalid &&
+                            state.message['taskDueDate']!.isNotEmpty
+                        ? Colors.red
+                        : _singleDatePickerValueWithDefaultValue.isEmpty
+                            ? Colors.black54
+                            : Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                ),
+                _singleDatePickerValueWithDefaultValue.isNotEmpty
+                    ? InkWell(
+                        onTap: () {
+                          setState(() {
+                            _singleDatePickerValueWithDefaultValue = [];
+                          });
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: state is TaskFormValidationInvalid &&
+                                  state.message['taskDueDate']!.isNotEmpty
+                              ? Colors.red
+                              : Colors.black,
+                        ),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

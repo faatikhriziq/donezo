@@ -1,5 +1,6 @@
 import 'package:donezo/src/auth/presentation/bloc/auth_form/auth_form_bloc.dart';
 import 'package:donezo/src/task_management/presentation/bloc/task_form/task_form_bloc.dart';
+import 'package:donezo/src/task_management/presentation/bloc/task_form_validation/task_form_validation_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../src/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -11,5 +12,6 @@ final List<BlocProvider> blocProviders = [
   BlocProvider<AuthFormBloc>(create: (context) => AuthFormBloc()),
   BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
   BlocProvider<TaskFormBloc>(create: (context) => sl<TaskFormBloc>()),
+BlocProvider<TaskFormValidationBloc>(create: (context) => sl<TaskFormValidationBloc>()),
 ];
 
