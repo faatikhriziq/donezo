@@ -5,7 +5,9 @@ import 'package:donezo/src/task_management/data/datasources/task_datasource.dart
 import 'package:donezo/src/task_management/data/repositories/task_repository_impl.dart';
 import 'package:donezo/src/task_management/domain/repositories/task_repository.dart';
 import 'package:donezo/src/task_management/domain/usecases/add_category_use_case.dart';
+import 'package:donezo/src/task_management/domain/usecases/get_task_use_case.dart';
 import 'package:donezo/src/task_management/injection.dart';
+import 'package:donezo/src/task_management/presentation/bloc/task/task_management_bloc.dart';
 import 'package:donezo/src/task_management/presentation/bloc/task_form/task_form_bloc.dart';
 import 'package:donezo/src/task_management/presentation/bloc/task_form_validation/task_form_validation_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,10 +95,12 @@ void init() async {
       () => AddCategoryUseCase(taskRepository: sl()));
   sl.registerLazySingleton<AddTaskUseCase>(
       () => AddTaskUseCase(taskRepository: sl()));
+  sl.registerLazySingleton<GetTaskUseCase>(() => GetTaskUseCase(sl()));
 
   sl.registerFactory<TaskFormBloc>(
       () => TaskFormBloc(addCategoryUseCase: sl(), addTaskUseCase: sl()));
   sl.registerFactory<TaskFormValidationBloc>(() => TaskFormValidationBloc());
+  sl.registerFactory<TaskManagementBloc>(() => TaskManagementBloc(sl()));
   // Params
   sl.registerLazySingleton<AddTaskParams>(
       () => AddTaskParams(task: sl(), todo: [

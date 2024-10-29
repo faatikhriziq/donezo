@@ -37,7 +37,7 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         errors['confirmPassword']!.add('Password does not match');
       }
 
-      if (errors['email']!.isNotEmpty || errors['password']!.isNotEmpty || errors['confirmPassword']!.isNotEmpty) {
+      if (errors.values.any((element) => element.isNotEmpty)) {
         emit(AuthFormSignUpInvalidValidateState(message: errors));
       } else {
         emit(AuthFormSignUpValidValidateState());
@@ -65,7 +65,7 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         errors['password']!.add('Password is Required');
       }
 
-      if (errors['email']!.isNotEmpty || errors['password']!.isNotEmpty) {
+      if (errors.values.any((element) => element.isNotEmpty)) {
         emit(AuthFormSignInInvalidValidateState(message: errors));
       } else {
         emit(AuthFormSignInValidValidateState());

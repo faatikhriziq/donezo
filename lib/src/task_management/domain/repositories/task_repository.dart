@@ -7,4 +7,5 @@ abstract class TaskRepository {
       TaskEntity task, List<Map<String, dynamic>> todo);
   Future<TodoEntity> addTodoTask();
   Future<DataState<String>> addCategory(String name);
+  Future<DataState<List<TaskEntity>>> getTask();
 }

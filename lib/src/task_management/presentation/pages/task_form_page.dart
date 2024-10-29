@@ -507,6 +507,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           ? _singleDatePickerValueWithDefaultValue[0]!
                           : DateTime.now()
                   ..todo = todoList;
+
                 context
                     .read<TaskFormBloc>()
                     .add(TaskFormAddTask(addTaskParams));
@@ -516,7 +517,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
           BlocListener<TaskFormBloc, TaskFormState>(
             listener: (context, state) {
               if (state is TaskFormAddTaskSuccess) {
-                GoRouter.of(context).pop();
+                context.pop(true);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content:

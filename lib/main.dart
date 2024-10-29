@@ -12,11 +12,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const Donezo());
+  runApp(const DonezoApp());
 }
 
-class Donezo extends StatelessWidget {
-  const Donezo({super.key});
+class DonezoApp extends StatelessWidget {
+  const DonezoApp({super.key});
 
   @override
   Widget build(BuildContext context) {

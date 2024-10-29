@@ -6,3 +6,5 @@ abstract class TaskManagementEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class TaskManagementGetTasks extends TaskManagementEvent {}

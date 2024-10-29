@@ -5,7 +5,10 @@ import 'package:donezo/pages/kanban_page.dart';
 import 'package:donezo/pages/profile_page.dart';
 import 'package:donezo/src/task_management/presentation/pages/task_page.dart';
 import 'package:donezo/config/theme/app_color.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unicons/unicons.dart';
+
+import '../../src/task_management/presentation/bloc/task/task_management_bloc.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -14,16 +17,11 @@ class NavigationMenu extends StatefulWidget {
   State<NavigationMenu> createState() => _NavigationMenuState();
 }
 
-class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStateMixin {
+class _NavigationMenuState extends State<NavigationMenu>
+    with TickerProviderStateMixin {
   final _pageController = PageController();
   var _selectedTab = SelectedTab.home;
-  List<Widget> pages = [
-    const HomePage(),
-    const CalendarPage(),
-    const TaskPage(),
-    const KanbanPage(),
-    const ProfilePage(),
-  ];
+  List<Widget> pages = [];
 
   Widget getPage(SelectedTab tab) {
     switch (tab) {
@@ -54,6 +52,21 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
       duration: const Duration(microseconds: 500),
       curve: Curves.decelerate,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      const HomePage(),
+      const CalendarPage(),
+      BlocProvider.value(
+        value: BlocProvider.of<TaskManagementBloc>(context),
+        child: const TaskPage(),
+      ),
+      const KanbanPage(),
+      const ProfilePage(),
+    ];
   }
 
   @override
@@ -111,7 +124,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   height: 5,
                   width: 30,
                   decoration: BoxDecoration(
-                    color: _selectedTab == SelectedTab.home ? Colors.white : Colors.transparent,
+                    color: _selectedTab == SelectedTab.home
+                        ? Colors.white
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -121,7 +136,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   },
                   icon: Icon(
                     UniconsLine.home,
-                    color: _selectedTab == SelectedTab.home ? Colors.white : AppColor.dark,
+                    color: _selectedTab == SelectedTab.home
+                        ? Colors.white
+                        : AppColor.dark,
                   ),
                 ),
               ],
@@ -135,7 +152,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   height: 5,
                   width: 30,
                   decoration: BoxDecoration(
-                    color: _selectedTab == SelectedTab.calendar ? Colors.white : Colors.transparent,
+                    color: _selectedTab == SelectedTab.calendar
+                        ? Colors.white
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -145,7 +164,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   },
                   icon: Icon(
                     UniconsLine.calendar_alt,
-                    color: _selectedTab == SelectedTab.calendar ? Colors.white : AppColor.dark,
+                    color: _selectedTab == SelectedTab.calendar
+                        ? Colors.white
+                        : AppColor.dark,
                   ),
                 ),
               ],
@@ -159,7 +180,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   height: 5,
                   width: 30,
                   decoration: BoxDecoration(
-                    color: _selectedTab == SelectedTab.task ? Colors.white : Colors.transparent,
+                    color: _selectedTab == SelectedTab.task
+                        ? Colors.white
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -169,7 +192,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   },
                   icon: Icon(
                     UniconsLine.plus_circle,
-                    color: _selectedTab == SelectedTab.task ? Colors.white : AppColor.dark,
+                    color: _selectedTab == SelectedTab.task
+                        ? Colors.white
+                        : AppColor.dark,
                   ),
                 ),
               ],
@@ -183,7 +208,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   height: 5,
                   width: 30,
                   decoration: BoxDecoration(
-                    color: _selectedTab == SelectedTab.kanban ? Colors.white : Colors.transparent,
+                    color: _selectedTab == SelectedTab.kanban
+                        ? Colors.white
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -193,7 +220,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   },
                   icon: Icon(
                     UniconsLine.layers_alt,
-                    color: _selectedTab == SelectedTab.kanban ? Colors.white : AppColor.dark,
+                    color: _selectedTab == SelectedTab.kanban
+                        ? Colors.white
+                        : AppColor.dark,
                   ),
                 ),
               ],
@@ -207,7 +236,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   height: 5,
                   width: 30,
                   decoration: BoxDecoration(
-                    color: _selectedTab == SelectedTab.profile ? Colors.white : Colors.transparent,
+                    color: _selectedTab == SelectedTab.profile
+                        ? Colors.white
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -217,7 +248,9 @@ class _NavigationMenuState extends State<NavigationMenu> with TickerProviderStat
                   },
                   icon: Icon(
                     UniconsLine.user,
-                    color: _selectedTab == SelectedTab.profile ? Colors.white : AppColor.dark,
+                    color: _selectedTab == SelectedTab.profile
+                        ? Colors.white
+                        : AppColor.dark,
                   ),
                 ),
               ],

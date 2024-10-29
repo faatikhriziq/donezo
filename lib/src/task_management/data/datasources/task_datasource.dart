@@ -19,8 +19,12 @@ class TaskDatasource {
     }
   }
 
-  Future<void> addTaskWithTodos(String title, String category,
-      String description, DateTime dueDate, List<Map<String, dynamic>> todo) async {
+  Future<void> addTaskWithTodos(
+      String title,
+      String category,
+      String description,
+      DateTime dueDate,
+      List<Map<String, dynamic>> todo) async {
     try {
       final collection = _firestore.collection('tasks');
       final userId = await getUserId();
@@ -32,6 +36,8 @@ class TaskDatasource {
         'category': category,
         'description': description,
         'userId': userId,
+        'completedPercentage': 0.0,
+        'isCompleted': false,
       });
 
       // Tambahkan masing-masing todo ke subkoleksi 'todos' di dalam dokumen task
@@ -46,6 +52,42 @@ class TaskDatasource {
       }
     } catch (e) {
       throw Exception('Failed to add task and todos: $e');
+    }
+  }
+
+  // Get Tasks Data from Firestore
+  Future<List<Map<String, dynamic>>> getTasks() async {
+    try {
+      log("Getting tasks");
+      final userId = await getUserId();
+      final collection = _firestore.collection('tasks');
+      final querySnapshot = await collection
+          .where('userId', isEqualTo: userId)
+          .orderBy('dueDate', descending: false)
+          .get();
+
+      // Prepare list of tasks with todos
+      List<Map<String, dynamic>> tasksWithTodos = [];
+
+      // Fetch todos for each task
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> taskData = doc.data();
+
+        // Fetch todos for this task
+        final todosSnapshot = await doc.reference.collection('todos').get();
+        final todos =
+            todosSnapshot.docs.map((todoDoc) => todoDoc.data()).toList();
+
+        // Add todos to task data
+        taskData['todos'] = todos;
+
+        // Add task with todos to the list
+        tasksWithTodos.add(taskData);
+      }
+
+      return tasksWithTodos;
+    } catch (e) {
+      throw Exception('Failed to get tasks: $e');
     }
   }
 }

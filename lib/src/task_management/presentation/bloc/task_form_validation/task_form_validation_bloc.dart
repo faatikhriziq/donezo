@@ -29,10 +29,7 @@ class TaskFormValidationBloc
         errors['description']!.add('Description is Required');
       }
 
-      if (errors['taskTitle']!.isNotEmpty ||
-          errors['taskDueDate']!.isNotEmpty ||
-          errors['taskCategory']!.isNotEmpty ||
-          errors['description']!.isNotEmpty) {
+      if (errors.values.any((element) => element.isNotEmpty)) {
         emit(TaskFormValidationInvalid(message: errors));
       } else {
         emit(TaskFormValidationValid());
