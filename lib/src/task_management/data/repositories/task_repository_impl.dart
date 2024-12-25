@@ -64,7 +64,7 @@ class TaskRepositoryImpl implements TaskRepository {
               description: task['description'],
               dueDate: task['dueDate'].toDate(),
               isCompleted: task['isCompleted'],
-              percentageCompleted: task['completedPercentage'],
+              percentageCompleted: task['completedPercentage'] == 0 ? 0.0 : task['completedPercentage'],
               todos: task['todos']
                   .map<TodoEntity>((todo) => TodoEntity(
                         todo: todo['title'],
@@ -74,7 +74,7 @@ class TaskRepositoryImpl implements TaskRepository {
           .toList();
       return DataState.success(tasks);
     } catch (e) {
-      return DataState.error('Failed to get task : $e');
+      return DataState.error('Failed to get task: $e');
     }
   }
 }

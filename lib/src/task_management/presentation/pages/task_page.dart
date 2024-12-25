@@ -6,6 +6,7 @@ import 'package:donezo/src/task_management/presentation/bloc/task/task_managemen
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -61,22 +62,41 @@ class _TaskPageState extends State<TaskPage> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TaskCard(
-                        title: state is TaskManagementLoaded
-                            ? state.tasks[index].title
-                            : BoneMock.title,
-                        category: state is TaskManagementLoaded
-                            ? state.tasks[index].category
-                            : BoneMock.email,
-                        percent: state is TaskManagementLoaded
-                            ? state.tasks[index].percentageCompleted!
-                            : 0.0,
-                        task: state is TaskManagementLoaded
-                            ? state.tasks[index].todos?.length ?? 0
-                            : 10,
-                        textPercent: state is TaskManagementLoaded
-                            ? "${(state.tasks[index].percentageCompleted! * 100).round()} %"
-                            : '20 %',
+                      child: Slidable(
+                        startActionPane: ActionPane(motion: StretchMotion(), children: 
+                          [
+                            SlidableAction(
+                              onPressed: (context) {
+                              // ignore: avoid_print
+                              },
+                              icon: Icons.delete,
+                              flex: 1,
+                              backgroundColor: AppColor.maroon,
+                              padding: const EdgeInsets.all(10),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ],
+                        ),
+                        child: InkWell(
+                          onTap: () => context.go(AppRoutes.taskDetail),
+                          child: TaskCard(
+                            title: state is TaskManagementLoaded
+                                ? state.tasks[index].title
+                                : BoneMock.title,
+                            category: state is TaskManagementLoaded
+                                ? state.tasks[index].category
+                                : BoneMock.email,
+                            percent: state is TaskManagementLoaded
+                                ? state.tasks[index].percentageCompleted!
+                                : 0.0,
+                            task: state is TaskManagementLoaded
+                                ? state.tasks[index].todos?.length ?? 0
+                                : 10,
+                            textPercent: state is TaskManagementLoaded
+                                ? "${(state.tasks[index].percentageCompleted! * 100).round()} %"
+                                : '20 %',
+                          ),
+                        ),
                       ),
                     );
                   },
